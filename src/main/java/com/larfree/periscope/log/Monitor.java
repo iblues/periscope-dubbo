@@ -1,4 +1,4 @@
-package com.zto.panda.common.periscope.log;
+package com.larfree.periscope.log;
 
 import javafx.event.Event;
 

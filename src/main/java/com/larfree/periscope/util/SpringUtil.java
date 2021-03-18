@@ -1,4 +1,4 @@
-package com.zto.panda.common.periscope.util;
+package com.larfree.periscope.util;
 
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;

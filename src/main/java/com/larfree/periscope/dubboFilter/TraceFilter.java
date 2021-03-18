@@ -1,12 +1,7 @@
-package com.zto.panda.common.periscope;
-
+package com.larfree.periscope.dubboFilter;
 import cn.hutool.core.util.RandomUtil;
 import com.alibaba.dubbo.rpc.*;
-import com.zto.panda.common.periscope.log.Interceptor;
-import com.zto.panda.common.periscope.log.PeriscopeEvent;
-import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
+import com.larfree.periscope.log.Interceptor;
 
 /**
  * @author Blues
@@ -20,7 +15,6 @@ public class TraceFilter implements Filter {
 
     private Interceptor interceptor;
 
-    @SneakyThrows
     @Override
     public Result invoke(Invoker<?> invoker, Invocation invocation) throws RpcException {
 

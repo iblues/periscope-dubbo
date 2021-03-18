@@ -1,9 +1,7 @@
-package com.zto.panda.common.periscope.log;
+package com.larfree.periscope.log;
 
-import com.zto.panda.common.periscope.Storage.RedisStore;
-import lombok.SneakyThrows;
+import com.larfree.periscope.storage.RedisStorage;
 
-import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 
 /**
@@ -17,7 +15,7 @@ public class Interceptor {
 
     //默认当前只支持redis
     private String storeType = "redis";
-    private RedisStore storage;
+    private RedisStorage storage;
 
 
     private String rootTraceKey = "";
@@ -29,16 +27,15 @@ public class Interceptor {
         switch (storeType) {
             case "redis":
             default:
-                storage = new RedisStore();
+                storage = new RedisStorage();
                 break;
         }
     }
 
 
-    @SneakyThrows
     public void start(String traceKey) {
         //在redis先把追踪链路记录
-        saveIndex(rootTraceKey,traceKey);
+        saveIndex(rootTraceKey, traceKey);
         //保存之前的out
         previousConsole = System.out;
         //设置代理输出, 方便拿取消息
@@ -48,7 +45,6 @@ public class Interceptor {
         System.setErr(newPrintStream);
         //记录时间点, 方便后面算时间
         PeriscopeEvent.getTimePointEvent().start(traceKey);
-
     }
 
     public String getTraceKey() {
@@ -61,7 +57,7 @@ public class Interceptor {
 
 
     public void setRootTraceKey(String rootTraceKey) {
-        System.out.println("PeriscopeRootKey"+rootTraceKey);
+        System.out.println("PeriscopeRootKey" + rootTraceKey);
         this.rootTraceKey = rootTraceKey;
     }
 
@@ -78,15 +74,17 @@ public class Interceptor {
 
     /**
      * 记录到list 作为目录
+     *
      * @param RootKey
      * @param indexKey
      */
-    private boolean saveIndex(String RootKey,String indexKey){
+    private boolean saveIndex(String RootKey, String indexKey) {
         return storage.setList(RootKey, indexKey);
     }
 
     /**
      * 存更详细的
+     *
      * @param key
      * @param value
      */

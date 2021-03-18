@@ -1,4 +1,4 @@
-package com.zto.panda.common.periscope.log.Elements;
+package com.larfree.periscope.log.Elements;
 
 import java.util.Date;
 import java.util.HashMap;
