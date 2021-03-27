@@ -1,6 +1,4 @@
-package com.larfree.periscope.log;
-
-import javafx.event.Event;
+package com.larfree.periscope.core.log;
 
 import java.io.IOException;
 import java.io.OutputStream;

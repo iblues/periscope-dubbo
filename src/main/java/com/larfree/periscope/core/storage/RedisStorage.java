@@ -1,9 +1,9 @@
-package com.larfree.periscope.storage;
+package com.larfree.periscope.core.storage;
 
 import cn.hutool.extra.spring.SpringUtil;
 import org.springframework.data.redis.core.StringRedisTemplate;
 
-import java.util.List;
+import javax.rmi.CORBA.Util;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -27,20 +27,17 @@ public class RedisStorage implements Storage{
         return true;
     }
 
-    @Override
-    public List multiGet() {
-        return null;
-    }
 
     /**
      * 保存目录
      * @param rootKey
      * @param indexKey
+     * @param action
      * @return
      */
     @Override
-    public boolean setList(String rootKey, String indexKey) {
-        stringRedisTemplate.opsForList().rightPush(prefixKey+":index:"+rootKey, indexKey);
+    public boolean setList(String rootKey, String indexKey, String action) {
+        stringRedisTemplate.opsForList().rightPush(prefixKey+":index:"+rootKey, indexKey+":"+action+":"+ System.currentTimeMillis());
         stringRedisTemplate.expire(prefixKey+":index:"+rootKey, expireTime, TimeUnit.SECONDS);
         return true;
     }

@@ -1,7 +1,7 @@
-package com.larfree.periscope.log;
+package com.larfree.periscope.core.log;
 
-import com.larfree.periscope.log.Elements.QueueEvent;
-import com.larfree.periscope.log.Elements.TimePointEvent;
+import com.larfree.periscope.core.log.Elements.QueueEvent;
+import com.larfree.periscope.core.log.Elements.TimePointEvent;
 
 /**
  * 后面有写成工厂方法的

@@ -1,4 +1,4 @@
-package com.larfree.periscope.log.Elements;
+package com.larfree.periscope.core.log.Elements;
 
 import java.util.Date;
 

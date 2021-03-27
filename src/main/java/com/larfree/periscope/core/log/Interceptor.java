@@ -1,8 +1,14 @@
-package com.larfree.periscope.log;
+package com.larfree.periscope.core.log;
 
-import com.larfree.periscope.storage.RedisStorage;
+import cn.hutool.core.util.RandomUtil;
+import com.larfree.periscope.core.storage.StorageFactory;
+import com.larfree.periscope.core.storage.Storage;
 
 import java.io.PrintStream;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * @author Blues
@@ -13,9 +19,8 @@ public class Interceptor {
     private PrintStream previousConsole;
     private Monitor newConsole;
 
-    //默认当前只支持redis
-    private String storeType = "redis";
-    private RedisStorage storage;
+
+    private Storage storage;
 
 
     private String rootTraceKey = "";
@@ -23,19 +28,24 @@ public class Interceptor {
 
     private String traceKey;
 
-    public Interceptor() {
-        switch (storeType) {
-            case "redis":
-            default:
-                storage = new RedisStorage();
-                break;
+    public static String getRootTrackKey(String type) {
+        String ip;
+        try {
+            ip = InetAddress.getLocalHost().getHostAddress();
+        } catch (UnknownHostException e) {
+            ip = "null";
         }
+        //时间戳+http+ip+随机
+        return System.currentTimeMillis() + "-" + type + "-" + ip + "-" + RandomUtil.randomString(16);
     }
 
+    public Interceptor() {
+        storage = StorageFactory.getInstance();
+    }
 
     public void start(String traceKey) {
         //在redis先把追踪链路记录
-        saveIndex(rootTraceKey, traceKey);
+        saveIndex(rootTraceKey, traceKey, "start");
         //保存之前的out
         previousConsole = System.out;
         //设置代理输出, 方便拿取消息
@@ -61,15 +71,17 @@ public class Interceptor {
         this.rootTraceKey = rootTraceKey;
     }
 
-    public void end(String trackKey) {
-        PeriscopeEvent.getTimePointEvent().end(trackKey);
+    public void end(String traceKey) {
+        PeriscopeEvent.getTimePointEvent().end(traceKey);
         // 设置回之前的输出
         System.setOut(previousConsole);
         System.setErr(previousConsole);
         //输出新控制台的
         String out = newConsole.toString();
+        //回写到Index方便统计时间
+        saveIndex(rootTraceKey, traceKey, "end");
         //写入到redis以供调用
-        saveDetail(trackKey, out);
+        saveDetail(traceKey, out);
     }
 
     /**
@@ -78,8 +90,8 @@ public class Interceptor {
      * @param RootKey
      * @param indexKey
      */
-    private boolean saveIndex(String RootKey, String indexKey) {
-        return storage.setList(RootKey, indexKey);
+    private boolean saveIndex(String RootKey, String indexKey, String action) {
+        return storage.setList(RootKey, indexKey, action);
     }
 
     /**

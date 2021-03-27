@@ -1,7 +1,7 @@
-package com.larfree.periscope.dubboFilter;
+package com.larfree.periscope.dubbo;
 import cn.hutool.core.util.RandomUtil;
 import com.alibaba.dubbo.rpc.*;
-import com.larfree.periscope.log.Interceptor;
+import com.larfree.periscope.core.log.Interceptor;
 
 /**
  * @author Blues
@@ -26,7 +26,7 @@ public class TraceFilter implements Filter {
             //如果是消费者,先读取下有没有上层传递过来的. 如果没有就生成一个
             String keyValue = RpcContext.getContext().getAttachments().get(traceKey);
             if (keyValue == null) {
-                keyValue = RandomUtil.randomString(32);
+                keyValue = Interceptor.getRootTrackKey("dubbo");
             }
             System.out.println("periscopeTraceKey.consumer:" + keyValue);
 
@@ -49,7 +49,7 @@ public class TraceFilter implements Filter {
                 // 如果是生产者，通过dubbo上下文获取TraceKey
                 String keyValue = RpcContext.getContext().getAttachments().get(traceKey);
                 if (keyValue == null) {
-                    rootTraceKey = keyValue = RandomUtil.randomString(32);
+                    rootTraceKey = keyValue = Interceptor.getRootTrackKey("dubbo");
                 } else {
                     String[] keyValues = keyValue.split(":");
                     rootTraceKey = keyValues[0];
